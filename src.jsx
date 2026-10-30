@@ -3,28 +3,44 @@ const db=createClient('https://gxesptbscnzrozuwtgry.supabase.co','sb_publishable
 const ticketNumbers=(sale,tickets)=>tickets.filter(t=>t.sale_id===sale.id).map(t=>String(t.number).padStart(4,'0'));
 const saleDate=value=>value?new Date(value).toLocaleString('es-AR'):'—';
 async function ticketCanvas(sale,numbers,sellerName){
- const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=1550;const ctx=canvas.getContext('2d');
- ctx.fillStyle='#f6faf8';ctx.fillRect(0,0,1200,1550);
- ctx.fillStyle='#073568';ctx.fillRect(0,0,1200,330);ctx.fillStyle='#087a45';ctx.fillRect(0,315,1200,16);
- const crest=document.querySelector('.club-crest');
- if(crest?.src){try{const img=new Image();img.src=crest.src;await img.decode();ctx.drawImage(img,70,42,175,225)}catch(e){}}
- ctx.fillStyle='#fff';ctx.font='bold 48px Arial';ctx.fillText('CLUB SAN MARTÍN',270,120);ctx.font='bold 33px Arial';ctx.fillText('PLANTEL SUPERIOR',270,175);ctx.font='28px Arial';ctx.fillText('GIRA SUDÁFRICA 2027',270,230);
- ctx.fillStyle='#073568';ctx.font='bold 58px Arial';ctx.fillText('RIFA OFICIAL',70,435);
- ctx.fillStyle='#087a45';ctx.font='bold 28px Arial';ctx.fillText('PAGO CONFIRMADO',70,495);
- const field=(label,value,y)=>{ctx.fillStyle='#61758b';ctx.font='24px Arial';ctx.fillText(label,70,y);ctx.fillStyle='#12253f';ctx.font='bold 34px Arial';ctx.fillText(String(value||'—').slice(0,46),70,y+46)};
- field('COMPRADOR',sale.buyer_name,575);field('VENDEDOR',sellerName,700);field('FECHA DE CONFIRMACIÓN',saleDate(sale.confirmed_at),825);
- ctx.fillStyle='#61758b';ctx.font='24px Arial';ctx.fillText('NÚMEROS ASIGNADOS',70,950);
- const list=numbers.length?numbers:['—'];ctx.font='bold 52px Arial';ctx.fillStyle='#073568';
- let y=1020;for(let i=0;i<list.length;i+=5){ctx.fillText(list.slice(i,i+5).join('  ·  '),70,y);y+=74;if(y>1300)break}
- if(list.length>20){ctx.font='22px Arial';ctx.fillText('Consultar listado completo en Mis ventas',70,1340)}
- ctx.fillStyle='#087a45';ctx.fillRect(0,1410,1200,140);ctx.fillStyle='#fff';ctx.font='bold 33px Arial';ctx.fillText('IMPORTE: '+money(Number(sale.ticket_price)*numbers.length),70,1490);
- return canvas;
+ const c=document.createElement('canvas');c.width=1600;c.height=1120;const x=c.getContext('2d');
+ const rect=(xx,yy,w,h,color)=>{x.fillStyle=color;x.fillRect(xx,yy,w,h)};
+ const txt=(v,xx,yy,size=28,color='#073568',bold=false)=>{x.fillStyle=color;x.font=(bold?'bold ':'')+size+'px Arial';x.fillText(String(v),xx,yy)};
+ const line=(xx,yy,w)=>rect(xx,yy,w,2,'#e1e9ef');
+ rect(0,0,1600,1120,'#f3f8f6');rect(0,0,1600,200,'#073568');rect(0,190,1600,10,'#087a45');
+ const crest=document.querySelector('.club-crest');if(crest?.src){try{const img=new Image();img.src=crest.src;await img.decode();x.drawImage(img,45,16,135,165)}catch(e){}}
+ txt('CLUB SAN MARTÍN',205,85,47,'#fff',true);txt('PLANTEL SUPERIOR · GIRA SUDÁFRICA 2027',205,135,28,'#cce8dc',true);
+ txt('RIFA OFICIAL',1070,83,43,'#fff',true);txt('PAGO CONFIRMADO',1080,135,27,'#b3f1d2',true);
+ rect(30,228,770,810,'#fff');rect(825,228,745,810,'#fff');
+ rect(30,228,770,68,'#087a45');txt('PREMIOS',60,276,38,'#fff',true);
+ // Primer premio destacado, con ilustración del teléfono
+ rect(50,314,730,180,'#092d52');rect(70,330,700,148,'#113e6b');
+ x.save();x.translate(130,333);x.rotate(-.08);rect(0,0,85,143,'#d5b56d');rect(7,6,71,131,'#171d2b');rect(15,20,55,100,'#223f68');for(const [cx,cy] of [[28,34],[53,34],[28,59]]){x.beginPath();x.arc(cx,cy,11,0,Math.PI*2);x.fillStyle='#0a1224';x.fill();x.strokeStyle='#d5b56d';x.lineWidth=3;x.stroke()}x.restore();
+ txt('1° PREMIO',250,365,25,'#f2ce74',true);txt('iPhone 18 Pro',250,428,53,'#fff',true);
+ const prizes=[
+ '2. Sillón Kora','3. Service de auto','4. Voucher VCP por $100.000',
+ '5. Cordero','6. Caja de cintas deportivas','7. 1° pase Beast Club Gym',
+ '8. 2° pase Beast Club Gym','9. 1° pase Entero (recuperación)',
+ '10. 2° pase Entero (recuperación)'
+ ];
+ prizes.forEach((p,i)=>{const yy=536+i*51;txt(p,66,yy,27,'#073568',i<3);if(i<prizes.length-1)line(62,yy+15,700)});
+ rect(825,228,745,68,'#073568');txt('DATOS DEL COMPRADOR',850,274,31,'#fff',true);
+ const field=(label,val,yy)=>{txt(label,850,yy,21,'#64748b');txt(String(val||'—').slice(0,43),850,yy+34,28,'#112d4b',true)};
+ field('NOMBRE',sale.buyer_name,330);field('TELÉFONO',sale.buyer_phone,415);field('EMAIL',sale.buyer_email||'No informado',500);
+ rect(825,581,745,56,'#073568');txt('DATOS DEL VENDEDOR',850,620,29,'#fff',true);
+ field('VENDEDOR',sellerName,670);
+ rect(825,763,745,56,'#073568');txt('NÚMEROS ASIGNADOS',850,802,29,'#fff',true);
+ const maxPerLine=7;const fontSize=numbers.length>20?21:32;
+ numbers.forEach((n,i)=>{const row=Math.floor(i/maxPerLine),col=i%maxPerLine;if(row<3){rect(843+col*100,840+row*56,90,45,'#e8f4ed');txt(n,853+col*100,873+row*56,fontSize,'#073568',true)}});
+ if(numbers.length>21)txt('+'+(numbers.length-21)+' números adicionales',845,1020,21,'#073568');
+ rect(30,1050,1540,70,'#073568');txt('SORTEO: 28/11/2026 · LOTERÍA NACIONAL',54,1095,27,'#fff',true);txt('VALOR: '+money(sale.ticket_price),1070,1095,27,'#fff',true);
+ return c;
 }
 async function downloadRaffle(sale,numbers,sellerName,format){
  if(sale.status!=='confirmed'||!numbers.length)throw Error('Solo se pueden descargar rifas confirmadas con números asignados');
  const canvas=await ticketCanvas(sale,numbers,sellerName);const filename='Rifa-'+numbers.join('-');
  if(format==='png'){const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw Error('No se pudo crear la imagen');const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000)}
- else{const {jsPDF}=await import('jspdf');const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});pdf.addImage(canvas.toDataURL('image/jpeg',.92),'JPEG',0,0,210,271.25);pdf.save(filename+'.pdf')}
+ else{const {jsPDF}=await import('jspdf');const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});pdf.addImage(canvas.toDataURL('image/jpeg',.92),'JPEG',0,0,297,207.9);pdf.save(filename+'.pdf')}
 }
 function App(){const[session,S]=useState(null),[profile,P]=useState(null),[page,G]=useState('inicio'),[authMode,M]=useState('login'),[email,E]=useState(''),[pass,W]=useState(''),[name,N]=useState(''),[msg,Q]=useState(''),[settings,C]=useState({ticket_price:25000,expense_target:2300000}),[stats,T]=useState([]),[tickets,K]=useState([]),[selected,U]=useState([]),[ticketSearch,SetTicketSearch]=useState(''),[buyer,B]=useState({buyer_name:'',buyer_phone:'',buyer_email:'',allocation:'individual',payment_method:'transfer'}),[sales,V]=useState([]),[people,J]=useState([]),[busy,H]=useState(false);
 useEffect(()=>{db.auth.getSession().then(({data})=>S(data.session));const{data:{subscription}}=db.auth.onAuthStateChange((_,s)=>S(s));return()=>subscription.unsubscribe()},[]);
