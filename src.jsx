@@ -3,38 +3,27 @@ const db=createClient('https://gxesptbscnzrozuwtgry.supabase.co','sb_publishable
 const ticketNumbers=(sale,tickets)=>tickets.filter(t=>t.sale_id===sale.id).map(t=>String(t.number).padStart(4,'0'));
 const saleDate=value=>value?new Date(value).toLocaleString('es-AR'):'—';
 async function ticketCanvas(sale,numbers,sellerName){
- const c=document.createElement('canvas');c.width=1600;c.height=1120;const x=c.getContext('2d');
- const rect=(xx,yy,w,h,color)=>{x.fillStyle=color;x.fillRect(xx,yy,w,h)};
- const txt=(v,xx,yy,size=28,color='#073568',bold=false)=>{x.fillStyle=color;x.font=(bold?'bold ':'')+size+'px Arial';x.fillText(String(v),xx,yy)};
- const line=(xx,yy,w)=>rect(xx,yy,w,2,'#e1e9ef');
- rect(0,0,1600,1120,'#f3f8f6');rect(0,0,1600,200,'#073568');rect(0,190,1600,10,'#087a45');
- const crest=document.querySelector('.club-crest');if(crest?.src){try{const img=new Image();img.src=crest.src;await img.decode();x.drawImage(img,45,16,135,165)}catch(e){}}
- txt('CLUB SAN MARTÍN',205,85,47,'#fff',true);txt('PLANTEL SUPERIOR · GIRA SUDÁFRICA 2027',205,135,28,'#cce8dc',true);
- txt('RIFA OFICIAL',1070,83,43,'#fff',true);txt('PAGO CONFIRMADO',1080,135,27,'#b3f1d2',true);
- rect(30,228,770,810,'#fff');rect(825,228,745,810,'#fff');
- rect(30,228,770,68,'#087a45');txt('PREMIOS',60,276,38,'#fff',true);
- // Primer premio destacado, con ilustración del teléfono
- rect(50,314,730,180,'#092d52');rect(70,330,700,148,'#113e6b');
- x.save();x.translate(130,333);x.rotate(-.08);rect(0,0,85,143,'#d5b56d');rect(7,6,71,131,'#171d2b');rect(15,20,55,100,'#223f68');for(const [cx,cy] of [[28,34],[53,34],[28,59]]){x.beginPath();x.arc(cx,cy,11,0,Math.PI*2);x.fillStyle='#0a1224';x.fill();x.strokeStyle='#d5b56d';x.lineWidth=3;x.stroke()}x.restore();
- txt('1° PREMIO',250,365,25,'#f2ce74',true);txt('iPhone 18 Pro',250,428,53,'#fff',true);
- const prizes=[
- '2. Sillón Kora','3. Service de auto','4. Voucher VCP por $100.000',
- '5. Cordero','6. Caja de cintas deportivas','7. 1° pase Beast Club Gym',
- '8. 2° pase Beast Club Gym','9. 1° pase Entero (recuperación)',
- '10. 2° pase Entero (recuperación)'
- ];
- prizes.forEach((p,i)=>{const yy=536+i*51;txt(p,66,yy,27,'#073568',i<3);if(i<prizes.length-1)line(62,yy+15,700)});
- rect(825,228,745,68,'#073568');txt('DATOS DEL COMPRADOR',850,274,31,'#fff',true);
- const field=(label,val,yy)=>{txt(label,850,yy,21,'#64748b');txt(String(val||'—').slice(0,43),850,yy+34,28,'#112d4b',true)};
- field('NOMBRE',sale.buyer_name,330);field('TELÉFONO',sale.buyer_phone,415);field('EMAIL',sale.buyer_email||'No informado',500);
- rect(825,581,745,56,'#073568');txt('DATOS DEL VENDEDOR',850,620,29,'#fff',true);
- field('VENDEDOR',sellerName,670);
- rect(825,763,745,56,'#073568');txt('NÚMEROS ASIGNADOS',850,802,29,'#fff',true);
- const maxPerLine=7;const fontSize=numbers.length>20?21:32;
- numbers.forEach((n,i)=>{const row=Math.floor(i/maxPerLine),col=i%maxPerLine;if(row<3){rect(843+col*100,840+row*56,90,45,'#e8f4ed');txt(n,853+col*100,873+row*56,fontSize,'#073568',true)}});
- if(numbers.length>21)txt('+'+(numbers.length-21)+' números adicionales',845,1020,21,'#073568');
- rect(30,1050,1540,70,'#073568');txt('SORTEO: 28/11/2026 · LOTERÍA NACIONAL',54,1095,27,'#fff',true);txt('VALOR: '+money(sale.ticket_price),1070,1095,27,'#fff',true);
- return c;
+ const canvas=document.createElement('canvas');canvas.width=1536;canvas.height=1024;const ctx=canvas.getContext('2d');
+ const image=new Image();image.src='/plantilla-rifa-san-martin.jpg';
+ try{await image.decode()}catch(e){throw Error('La plantilla original todavía no está disponible en el servidor. No se generó un boleto con diseño incorrecto.')}
+ ctx.drawImage(image,0,0,1536,1024);
+ const fill=(x,y,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(x,y,w,h)};
+ const text=(value,x,y,size=24,color='#0a2547',bold=true)=>{ctx.fillStyle=color;ctx.font=(bold?'bold ':'')+size+'px Arial';ctx.fillText(String(value||'—'),x,y)};
+ const fit=(value,x,y,maxWidth,size=24)=>{ctx.fillStyle='#0a2547';ctx.font='bold '+size+'px Arial';let v=String(value||'—');while(ctx.measureText(v).width>maxWidth&&v.length>3)v=v.slice(0,-2)+'…';ctx.fillText(v,x,y)};
+ // Limpiar únicamente los valores de ejemplo; conservar cabeceras y elementos del diseño.
+ fill(980,340,485,42,'#ffffff');fill(980,385,485,42,'#ffffff');fill(980,429,485,42,'#ffffff');
+ fit(sale.buyer_name,990,372,460,25);fit(sale.buyer_phone||'—',990,416,460,24);fit(sale.buyer_email||'No informado',990,460,460,23);
+ fill(983,540,474,44,'#ffffff');fit(sellerName,990,570,455,24);
+ // Legajo/rol del vendedor: mantener el rótulo original, no inventar legajo.
+ fill(982,586,476,30,'#ffffff');text('Plantel Superior',990,608,22);
+ // Cubrir los cinco números de ejemplo y crear tantas filas como sean necesarias.
+ fill(823,687,652,93,'#f7faf9');
+ const cols=5,cellW=122,cellH=55;const maxVisible=cols*2;
+ numbers.slice(0,maxVisible).forEach((n,i)=>{const x=829+(i%cols)*130,y=694+Math.floor(i/cols)*62;ctx.fillStyle='#f9fcfb';ctx.fillRect(x,y,119,52);ctx.strokeStyle='#087a45';ctx.lineWidth=2;ctx.strokeRect(x,y,119,52);text(n,x+21,y+36,26)});
+ if(numbers.length>maxVisible){fill(825,816,645,33,'#ffffff');text('+'+(numbers.length-maxVisible)+' números adicionales: consultar Mis ventas',836,839,20)}
+ // Fecha definitiva del sorteo.
+ fill(155,908,295,46,'#073568');text('28 DE NOVIEMBRE 2026',160,939,27,'#ffffff');
+ return canvas;
 }
 async function downloadRaffle(sale,numbers,sellerName,format){
  if(sale.status!=='confirmed'||!numbers.length)throw Error('Solo se pueden descargar rifas confirmadas con números asignados');
