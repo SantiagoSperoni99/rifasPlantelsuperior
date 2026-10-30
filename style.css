@@ -10,3 +10,6 @@
 
 /* Eliminar visualmente el fondo negro del archivo original del escudo */
 .club-crest{mix-blend-mode:screen;border-radius:0;background:transparent}
+
+/* Mis ventas: tabla compacta */
+.sales-table{width:100%;border-collapse:collapse;min-width:740px}.sales-table th,.sales-table td{text-align:left;padding:10px 12px;border-bottom:1px solid #e5edf0;font-size:13px;vertical-align:middle}.sales-table th{background:#eff5f8;color:#073568;white-space:nowrap}.sales-table tbody tr:hover{background:#f6faf8}.sales-table .sale-status{white-space:nowrap}.sale-dropdown{position:relative}.sale-dropdown summary{cursor:pointer;color:#073568;font-weight:800;white-space:nowrap}.sale-dropdown-content{min-width:260px;max-width:360px;padding:12px 4px}.sale-dropdown-content p{margin:7px 0;overflow-wrap:anywhere}.sale-dropdown-content .sale-actions button{padding:9px 12px}.sales-table td:nth-child(3){max-width:200px;overflow-wrap:anywhere}@media(max-width:650px){.sales-table{min-width:670px}.sales-table th,.sales-table td{padding:9px 8px}}
