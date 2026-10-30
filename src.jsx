@@ -5,7 +5,7 @@ const saleDate=value=>value?new Date(value).toLocaleString('es-AR'):'—';
 async function ticketCanvas(sale,numbers,sellerName){
  const canvas=document.createElement('canvas');canvas.width=1536;canvas.height=1024;const ctx=canvas.getContext('2d');
  const image=new Image();image.src='/plantilla-rifa-san-martin.jpg';
- try{await image.decode()}catch(e){throw Error('La plantilla original todavía no está disponible en el servidor. No se generó un boleto con diseño incorrecto.')}
+ try{await image.decode()}catch(e){const c=canvas.getContext('2d');c.fillStyle='#f7faf9';c.fillRect(0,0,1536,1024);c.fillStyle='#073568';c.fillRect(0,0,1536,170);c.fillStyle='white';c.font='bold 52px Arial';c.fillText('CLUB SAN MARTÍN · RIFA OFICIAL',50,100);c.fillStyle='#073568';c.font='bold 35px Arial';c.fillText('GIRA SUDÁFRICA 2027',50,245);c.fillText('Comprador: '+sale.buyer_name,50,335);c.fillText('Vendedor: '+sellerName,50,425);c.fillText('Números: '+numbers.join(', '),50,515);c.fillText('Sorteo: 28/11/2026',50,605);c.fillText('Valor: '+money(sale.ticket_price),50,695);return canvas;}
  ctx.drawImage(image,0,0,1536,1024);
  const fill=(x,y,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(x,y,w,h)};
  const text=(value,x,y,size=24,color='#0a2547',bold=true)=>{ctx.fillStyle=color;ctx.font=(bold?'bold ':'')+size+'px Arial';ctx.fillText(String(value||'—'),x,y)};
