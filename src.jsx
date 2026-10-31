@@ -10,22 +10,23 @@ async function ticketCanvas(sale,numbers,sellerName){
  const round=(x,y,w,h,r,color)=>{ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=color;ctx.fill()};
  const text=(v,x,y,size=24,color='#092f5b',weight='bold')=>{ctx.fillStyle=color;ctx.font=weight+' '+size+'px Arial';ctx.fillText(String(v??'—'),x,y)};
  const fit=(v,x,y,maxWidth,size=26)=>{let value=String(v||'—');ctx.font='bold '+size+'px Arial';while(ctx.measureText(value).width>maxWidth&&value.length>2)value=value.slice(0,-2)+'…';text(value,x,y,size)};
- // Panel derecho reconstruido con tres módulos y espacios consistentes.
- // Comienza por debajo del logo de la gira; no invade los premios ni el agradecimiento.
- const x=814,w=704,innerX=837,innerW=658;
- const panel=(y,h,title)=>{round(x,y,w,h,18,'#f9fbfd');round(innerX,y+12,innerW,48,9,'#073568');text(title,innerX+24,y+45,25,'#ffffff')};
- panel(326,194,'DATOS DEL COMPRADOR');
- const field=(key,value,y,divider=true)=>{text(key,innerX+23,y,22,'#526980','normal');fit(value,innerX+194,y,innerW-230,26);if(divider)box(innerX+23,y+16,innerW-46,1,'#e0e8ed')};
- field('Nombre:',sale.buyer_name,410);
- field('Teléfono:',sale.buyer_phone||'—',454);
- field('Email:',sale.buyer_email||'No informado',498,false);
- panel(529,106,'DATOS DEL VENDEDOR');
- field('Vendedor:',sellerName,614,false);
- panel(644,171,'NÚMEROS DE RIFA ASIGNADOS');
+ // Columna derecha: cubrir primero los títulos impresos en la plantilla y
+ // reconstruir las tres tarjetas como una unidad para evitar títulos duplicados.
+ const x=807,w=711,innerX=831,innerW=665;
+ const panel=(y,h,title)=>{round(x,y,w,h,15,'#f9fbfd');round(innerX,y+8,innerW,40,7,'#073568');text(title,innerX+22,y+36,23,'#ffffff')};
+ const field=(key,value,y,divider=true)=>{text(key,innerX+20,y,20,'#526980','normal');fit(value,innerX+196,y,innerW-226,24);if(divider)box(innerX+20,y+10,innerW-40,1,'#e0e8ed')};
+ // Despeja el logo (que termina aproximadamente en y=325).
+ panel(337,185,'DATOS DEL COMPRADOR');
+ field('Nombre:',sale.buyer_name,406);
+ field('Teléfono:',sale.buyer_phone||'—',450);
+ field('Email:',sale.buyer_email||'No informado',494,false);
+ panel(532,101,'DATOS DEL VENDEDOR');
+ field('Vendedor:',sellerName,606,false);
+ panel(643,167,'NÚMEROS DE RIFA ASIGNADOS');
  const shown=numbers.slice(0,10);
- const gap=12,cellW=112,cellH=47,cols=5,startX=innerX+20,startY=712;
- shown.forEach((n,i)=>{const xx=startX+(i%cols)*(cellW+gap),yy=startY+Math.floor(i/cols)*54;round(xx,yy,cellW,cellH,7,'#ffffff');ctx.strokeStyle='#087a45';ctx.lineWidth=2;ctx.strokeRect(xx,yy,cellW,cellH);ctx.font='bold 27px Arial';const value=String(n);text(value,xx+(cellW-ctx.measureText(value).width)/2,yy+33,27)});
- if(numbers.length>10)text('+'+(numbers.length-10)+' números más en Mis ventas',innerX+20,808,18);
+ const gap=12,cellW=112,cellH=45,cols=5,startX=innerX+20,startY=706;
+ shown.forEach((n,i)=>{const xx=startX+(i%cols)*(cellW+gap),yy=startY+Math.floor(i/5)*51;round(xx,yy,cellW,cellH,6,'#ffffff');ctx.strokeStyle='#087a45';ctx.lineWidth=2;ctx.strokeRect(xx,yy,cellW,cellH);ctx.font='bold 26px Arial';const value=String(n);text(value,xx+(cellW-ctx.measureText(value).width)/2,yy+32,26)});
+ if(numbers.length>10)text('+'+(numbers.length-10)+' números más',innerX+20,805,17);
  // Fecha y precio permanecen en el diseño original.
  return canvas;
 }
