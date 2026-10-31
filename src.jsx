@@ -19,15 +19,15 @@ async function ticketCanvas(sale,numbers,sellerName){
  panel(612,'NÚMEROS DE RIFA ASIGNADOS',179);
  const shown=numbers.slice(0,10);shown.forEach((n,i)=>{const xx=845+(i%5)*130,yy=682+Math.floor(i/5)*56;box(xx,yy,116,48,'#ffffff');ctx.strokeStyle='#087a45';ctx.lineWidth=2;ctx.strokeRect(xx,yy,116,48);label(n,xx+24,yy+34,27)});
  if(numbers.length>10)label('+'+(numbers.length-10)+' números adicionales',855,784,19);
- // Fecha: redibujar todo el sector, no superponer texto sobre el anterior.
- box(37,852,766,122,'#073568');label('FECHA DEL SORTEO',150,896,21,'#ffffff','normal');label('28 DE NOVIEMBRE 2026',150,943,33,'#ffffff');label('VALOR DE LA RIFA',590,896,19,'#ffffff','normal');label('$ 25.000',590,943,33,'#ffffff');
+ // La fecha y el valor ya están correctamente impresos en la plantilla original.
+ // No dibujar sobre el bloque de premios: conserva los diez premios completos.
  return canvas;
 }
 async function downloadRaffle(sale,numbers,sellerName,format){
  if(sale.status!=='confirmed'||!numbers.length)throw Error('Solo se pueden descargar rifas confirmadas con números asignados');
  const canvas=await ticketCanvas(sale,numbers,sellerName);const filename='Rifa-'+numbers.join('-');
  if(format==='png'){const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw Error('No se pudo crear la imagen');const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000)}
- else{const {jsPDF}=await import('jspdf');const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});pdf.addImage(canvas.toDataURL('image/jpeg',.92),'JPEG',0,0,297,207.9);pdf.save(filename+'.pdf')}
+ else{const {jsPDF}=await import('jspdf');const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});pdf.addImage(canvas.toDataURL('image/jpeg',.95),'JPEG',0,49.5,297,198);pdf.save(filename+'.pdf')}
 }
 function App(){const[session,S]=useState(null),[profile,P]=useState(null),[page,G]=useState('inicio'),[menuOpen,SetMenuOpen]=useState(false),[authMode,M]=useState('login'),[email,E]=useState(''),[pass,W]=useState(''),[name,N]=useState(''),[msg,Q]=useState(''),[settings,C]=useState({ticket_price:25000,expense_target:2300000}),[stats,T]=useState([]),[tickets,K]=useState([]),[selected,U]=useState([]),[ticketSearch,SetTicketSearch]=useState(''),[buyer,B]=useState({buyer_name:'',buyer_phone:'',buyer_email:'',allocation:'individual',payment_method:'transfer'}),[sales,V]=useState([]),[people,J]=useState([]),[busy,H]=useState(false);
 useEffect(()=>{db.auth.getSession().then(({data})=>S(data.session));const{data:{subscription}}=db.auth.onAuthStateChange((_,s)=>S(s));return()=>subscription.unsubscribe()},[]);
