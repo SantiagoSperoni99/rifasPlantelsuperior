@@ -4,25 +4,23 @@ const ticketNumbers=(sale,tickets)=>tickets.filter(t=>t.sale_id===sale.id).map(t
 const saleDate=value=>value?new Date(value).toLocaleString('es-AR'):'—';
 async function ticketCanvas(sale,numbers,sellerName){
  const canvas=document.createElement('canvas');canvas.width=1536;canvas.height=1024;const ctx=canvas.getContext('2d');
- const image=new Image();image.src=raffleTemplateUrl;
- try{await image.decode()}catch(e){const c=canvas.getContext('2d');c.fillStyle='#f7faf9';c.fillRect(0,0,1536,1024);c.fillStyle='#073568';c.fillRect(0,0,1536,170);c.fillStyle='white';c.font='bold 52px Arial';c.fillText('CLUB SAN MARTÍN · RIFA OFICIAL',50,100);c.fillStyle='#073568';c.font='bold 35px Arial';c.fillText('GIRA SUDÁFRICA 2027',50,245);c.fillText('Comprador: '+sale.buyer_name,50,335);c.fillText('Vendedor: '+sellerName,50,425);c.fillText('Números: '+numbers.join(', '),50,515);c.fillText('Sorteo: 28/11/2026',50,605);c.fillText('Valor: '+money(sale.ticket_price),50,695);return canvas;}
+ const image=new Image();image.src=raffleTemplateUrl;await image.decode();
  ctx.drawImage(image,0,0,1536,1024);
- const fill=(x,y,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(x,y,w,h)};
- const text=(value,x,y,size=24,color='#0a2547',bold=true)=>{ctx.fillStyle=color;ctx.font=(bold?'bold ':'')+size+'px Arial';ctx.fillText(String(value||'—'),x,y)};
- const fit=(value,x,y,maxWidth,size=24)=>{ctx.fillStyle='#0a2547';ctx.font='bold '+size+'px Arial';let v=String(value||'—');while(ctx.measureText(v).width>maxWidth&&v.length>3)v=v.slice(0,-2)+'…';ctx.fillText(v,x,y)};
- // Limpiar únicamente los valores de ejemplo; conservar cabeceras y elementos del diseño.
- fill(980,340,485,42,'#ffffff');fill(980,385,485,42,'#ffffff');fill(980,429,485,42,'#ffffff');
- fit(sale.buyer_name,990,372,460,25);fit(sale.buyer_phone||'—',990,416,460,24);fit(sale.buyer_email||'No informado',990,460,460,23);
- fill(983,540,474,44,'#ffffff');fit(sellerName,990,570,455,24);
- // Legajo/rol del vendedor: mantener el rótulo original, no inventar legajo.
- fill(982,586,476,30,'#ffffff');text('Plantel Superior',990,608,22);
- // Cubrir los cinco números de ejemplo y crear tantas filas como sean necesarias.
- fill(823,687,652,93,'#f7faf9');
- const cols=5,cellW=122,cellH=55;const maxVisible=cols*2;
- numbers.slice(0,maxVisible).forEach((n,i)=>{const x=829+(i%cols)*130,y=694+Math.floor(i/cols)*62;ctx.fillStyle='#f9fcfb';ctx.fillRect(x,y,119,52);ctx.strokeStyle='#087a45';ctx.lineWidth=2;ctx.strokeRect(x,y,119,52);text(n,x+21,y+36,26)});
- if(numbers.length>maxVisible){fill(825,816,645,33,'#ffffff');text('+'+(numbers.length-maxVisible)+' números adicionales: consultar Mis ventas',836,839,20)}
- // Fecha definitiva del sorteo.
- fill(155,908,295,46,'#073568');text('28 DE NOVIEMBRE 2026',160,939,27,'#ffffff');
+ const box=(x,y,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(x,y,w,h)};
+ const label=(value,x,y,size=24,color='#092f5b',weight='bold')=>{ctx.fillStyle=color;ctx.font=weight+' '+size+'px Arial';ctx.fillText(String(value||'—'),x,y)};
+ const fitted=(value,x,y,maxWidth,size=26)=>{const v=String(value||'—');ctx.font='bold '+size+'px Arial';const measured=ctx.measureText(v).width;label(v,x,y,measured>maxWidth?Math.max(16,Math.floor(size*maxWidth/measured)):size)};
+ const panel=(y,title,height)=>{box(813,y,709,height,'#f9fbfc');box(828,y+10,679,42,'#073568');label(title,852,y+40,23,'#ffffff');};
+ // Rehacer los campos dinámicos como componentes completos, sin tapar palabras aisladas.
+ panel(268,'DATOS DEL COMPRADOR',208);
+ const field=(key,value,y)=>{label(key,855,y,21,'#365477','normal');fitted(value,1010,y,465,25);box(853,y+12,626,1,'#e3e9ee')};
+ field('Nombre:',sale.buyer_name,341);field('Teléfono:',sale.buyer_phone||'—',397);field('Email:',sale.buyer_email||'No informado',453);
+ panel(487,'DATOS DEL VENDEDOR',115);
+ label('Vendedor:',855,570,22,'#365477','normal');fitted(sellerName,1010,570,470,26);
+ panel(612,'NÚMEROS DE RIFA ASIGNADOS',179);
+ const shown=numbers.slice(0,10);shown.forEach((n,i)=>{const xx=845+(i%5)*130,yy=682+Math.floor(i/5)*56;box(xx,yy,116,48,'#ffffff');ctx.strokeStyle='#087a45';ctx.lineWidth=2;ctx.strokeRect(xx,yy,116,48);label(n,xx+24,yy+34,27)});
+ if(numbers.length>10)label('+'+(numbers.length-10)+' números adicionales',855,784,19);
+ // Fecha: redibujar todo el sector, no superponer texto sobre el anterior.
+ box(37,852,766,122,'#073568');label('FECHA DEL SORTEO',150,896,21,'#ffffff','normal');label('28 DE NOVIEMBRE 2026',150,943,33,'#ffffff');label('VALOR DE LA RIFA',590,896,19,'#ffffff','normal');label('$ 25.000',590,943,33,'#ffffff');
  return canvas;
 }
 async function downloadRaffle(sale,numbers,sellerName,format){
