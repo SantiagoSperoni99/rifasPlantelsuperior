@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react';import{createRoot}from'react-dom/client';import{createClient}from'@supabase/supabase-js';import './style.css';import raffleTemplateUrl from './plantilla-rifa-san-martin.jpg?url';
+import React,{useEffect,useState} from 'react';import{createRoot}from'react-dom/client';import{createClient}from'@supabase/supabase-js';import './style.css';import raffleTemplateUrl from './C5D5D7B1-0D15-40FE-A37A-C954C3ED4238.png?url';
 const db=createClient('https://gxesptbscnzrozuwtgry.supabase.co','sb_publishable_YdSPSGG2eV9n_LjdynB_Zg_XRiO8zJS');const money=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n||0);
 const ticketNumbers=(sale,tickets)=>tickets.filter(t=>t.sale_id===sale.id).map(t=>String(t.number).padStart(4,'0'));
 const saleDate=value=>value?new Date(value).toLocaleString('es-AR'):'—';
