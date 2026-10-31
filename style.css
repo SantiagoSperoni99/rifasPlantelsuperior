@@ -22,3 +22,11 @@
 
 /* Alias de pago visible y fácil de compartir */
 .payment-alias-card{border:2px solid #0a8153;background:#f0faf5}.payment-alias-card h2{color:#075b40}.payment-alias-value{font-size:clamp(22px,4vw,34px);font-weight:900;letter-spacing:.3px;overflow-wrap:anywhere;color:#073568;margin:12px 0 18px}.payment-alias-card button{width:auto;min-height:44px}.alias-admin-field{margin-top:26px;padding-top:20px;border-top:1px solid #dbe6e8}.alias-admin-field input{width:100%;max-width:550px}@media(max-width:600px){.payment-alias-card button{width:100%}}
+
+/* Tarjeta de transferencia refinada en el formulario de venta */
+.transfer-alias-inline{margin:18px 0 20px;padding:18px 20px;border:1px solid #d8e5e2;border-radius:14px;background:linear-gradient(135deg,#f7fbfa 0%,#f1f8f5 100%);box-shadow:0 2px 10px rgba(12,49,65,.035)}
+.transfer-alias-inline h3{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:16px;font-weight:750;color:#17334d}
+.transfer-alias-inline p{margin:0 0 12px;font-size:13px;line-height:1.5;color:#5a6e7d}
+.transfer-alias-inline .payment-alias-value{display:inline-flex;align-items:center;min-height:46px;margin:0 0 12px;padding:8px 14px;border:1px solid #d9e7e5;border-radius:9px;background:#fff;font-size:clamp(20px,3vw,25px);font-weight:750;letter-spacing:.1px;color:#103e62;box-shadow:0 1px 3px rgba(0,0,0,.025)}
+.transfer-alias-inline button{display:flex;align-items:center;justify-content:center;width:auto;min-height:40px;padding:9px 15px;border-radius:9px;font-size:13px;font-weight:650}
+@media(max-width:600px){.transfer-alias-inline{padding:16px}.transfer-alias-inline .payment-alias-value{display:flex;width:100%;font-size:21px}.transfer-alias-inline button{width:100%}}
