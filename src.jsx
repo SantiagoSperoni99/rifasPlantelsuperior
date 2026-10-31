@@ -11,13 +11,13 @@ async function ticketCanvas(sale,numbers,sellerName){
  const fitted=(value,x,y,maxWidth,size=26)=>{const v=String(value||'—');ctx.font='bold '+size+'px Arial';const measured=ctx.measureText(v).width;label(v,x,y,measured>maxWidth?Math.max(16,Math.floor(size*maxWidth/measured)):size)};
  const panel=(y,title,height)=>{box(813,y,709,height,'#f9fbfc');box(828,y+10,679,42,'#073568');label(title,852,y+40,23,'#ffffff');};
  // Rehacer los campos dinámicos como componentes completos, sin tapar palabras aisladas.
- panel(268,'DATOS DEL COMPRADOR',208);
+ panel(295,'DATOS DEL COMPRADOR',194);
  const field=(key,value,y)=>{label(key,855,y,21,'#365477','normal');fitted(value,1010,y,465,25);box(853,y+12,626,1,'#e3e9ee')};
- field('Nombre:',sale.buyer_name,341);field('Teléfono:',sale.buyer_phone||'—',397);field('Email:',sale.buyer_email||'No informado',453);
- panel(487,'DATOS DEL VENDEDOR',115);
- label('Vendedor:',855,570,22,'#365477','normal');fitted(sellerName,1010,570,470,26);
- panel(612,'NÚMEROS DE RIFA ASIGNADOS',179);
- const shown=numbers.slice(0,10);shown.forEach((n,i)=>{const xx=845+(i%5)*130,yy=682+Math.floor(i/5)*56;box(xx,yy,116,48,'#ffffff');ctx.strokeStyle='#087a45';ctx.lineWidth=2;ctx.strokeRect(xx,yy,116,48);label(n,xx+24,yy+34,27)});
+ field('Nombre:',sale.buyer_name,365);field('Teléfono:',sale.buyer_phone||'—',415);field('Email:',sale.buyer_email||'No informado',465);
+ panel(499,'DATOS DEL VENDEDOR',110);
+ label('Vendedor:',855,579,22,'#365477','normal');fitted(sellerName,1010,579,470,26);
+ panel(619,'NÚMEROS DE RIFA ASIGNADOS',174);
+ const shown=numbers.slice(0,10);shown.forEach((n,i)=>{const xx=845+(i%5)*130,yy=686+Math.floor(i/5)*56;box(xx,yy,116,48,'#ffffff');ctx.strokeStyle='#087a45';ctx.lineWidth=2;ctx.strokeRect(xx,yy,116,48);label(n,xx+24,yy+34,27)});
  if(numbers.length>10)label('+'+(numbers.length-10)+' números adicionales',855,784,19);
  // La fecha y el valor ya están correctamente impresos en la plantilla original.
  // No dibujar sobre el bloque de premios: conserva los diez premios completos.
