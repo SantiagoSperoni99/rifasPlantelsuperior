@@ -38,3 +38,7 @@
 .sale-numbers-more summary{cursor:pointer;font-size:12px;color:#087a45;font-weight:700;white-space:nowrap}
 .sale-numbers-expanded{margin-top:8px;max-width:190px;white-space:normal;line-height:1.7;font-size:12px;color:#193453;overflow-wrap:anywhere}
 .tablewrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* Confirmación de pagos: evitar desbordes en ventas con muchos números */
+.payment-numbers{margin:9px 0 13px;padding:10px 12px;border-radius:9px;background:#f0f6f5;color:#17334d;font-size:13px;line-height:1.6;overflow-wrap:anywhere;max-width:100%}
+.payment-numbers .sale-numbers-expanded{max-width:none;white-space:normal;word-break:break-word}
