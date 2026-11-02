@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react';import{createRoot}from'react-dom/client';import{createClient}from'@supabase/supabase-js';import './style.css';
+import React,{useEffect,useState} from 'react';import{createRoot}from'react-dom/client';import{createClient}from'@supabase/supabase-js';import './style.css';import clubCrestUrl from './favicon-rifa.png?url';
 const db=createClient('https://gxesptbscnzrozuwtgry.supabase.co','sb_publishable_YdSPSGG2eV9n_LjdynB_Zg_XRiO8zJS');const money=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n||0);
 const buyerMessage="🏉🇿🇦 ¡Nos vamos de gira a Sudáfrica 2027!\n\n¡Hola! ¿Cómo estás? 🙌🏼\n\nCon el Plantel Superior de Rugby del Club San Martín estamos organizando una rifa para juntar fondos y poder cumplir el sueño de viajar a Sudáfrica.\n\n🎟️ Cada número sale $25.000 y tenemos unos premios tremendos:\n\n🎁 Premios:\n📱 iPhone 18 Pro\n🛋️ Sillón Kora\n🚗 Service completo para el auto\n🐑 Un cordero\n🏉 Caja de cintas deportivas\n🏋️ 3 pases individuales para Beast Club Gym\n💪 2 sesiones individuales de recuperación deportiva en Entero\n\n📅 Sorteamos el 28 de noviembre.\n\nCualquier ayuda nos acerca un poquito más a esta experiencia que estamos preparando con tantas ganas.\n\n❤️ ¡Gracias por darnos una mano!\n\n¿Te copás con algún numerito? 🇿🇦🏉";
 const ticketNumbers=(sale,tickets)=>tickets.filter(t=>t.sale_id===sale.id).map(t=>String(t.number).padStart(4,'0'));
@@ -14,7 +14,7 @@ async function ticketCanvas(sale,numbers,sellerName){
  rect(0,0,1600,190,navy);rect(0,190,1600,11,green);
  rect(0,0,24,1000,green);
  rounded(55,35,118,118,24,white);
- const logo=new Image();logo.src='/favicon-rifa.png';
+ const logo=new Image();logo.src=clubCrestUrl;
  try{await logo.decode();c.drawImage(logo,65,45,98,98)}catch{}
  label('CLUB SAN MARTÍN',207,91,49,white);
  label('PLANTEL SUPERIOR  ·  GIRA SUDÁFRICA 2027',210,144,25,'#cde5dd');
