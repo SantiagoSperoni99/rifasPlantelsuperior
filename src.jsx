@@ -6,23 +6,34 @@ const ticketNumbers=(sale,tickets)=>tickets.filter(t=>t.sale_id===sale.id).map(t
 const saleDate=value=>value?new Date(value).toLocaleString('es-AR'):'—';
 async function ticketCanvas(sale,numbers,sellerName){
  const base=new Image();base.src=ticketTemplateUrl;await base.decode();
- const W=1648,H=928,cols=8,rows=3,pageSize=cols*rows,extra=Math.max(0,numbers.length-pageSize);
- const extraRows=Math.ceil(extra/cols),extraHeight=extraRows?110+extraRows*49:0;
+ const W=1648,H=928,cols=5,rows=3,pageSize=cols*rows;
+ const numbersText=numbers.map(n=>String(n).padStart(4,'0'));
+ const extra=Math.max(0,numbersText.length-pageSize),extraRows=Math.ceil(extra/8);
+ const extraHeight=extraRows?120+extraRows*54:0;
  const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H+extraHeight;
  const ctx=canvas.getContext('2d');ctx.drawImage(base,0,0,W,H);
  const navy='#092f5b',green='#087a45';
  const write=(v,x,y,size=24,max=430)=>{let t=String(v||'—');ctx.font='bold '+size+'px Arial';while(ctx.measureText(t).width>max&&t.length>2)t=t.slice(0,-2)+'…';ctx.fillStyle=navy;ctx.fillText(t,x,y)};
- // Datos dinámicos sobre los espacios vacíos de la plantilla.
  write(sale.buyer_name,1160,363,25,390);
  write(sale.buyer_phone||'—',1160,403,25,390);
  write(sale.buyer_email||'No informado',1160,443,21,390);
  write(sellerName,1047,554,28,480);
- const numbersText=numbers.map(n=>String(n).padStart(4,'0'));
- numbersText.slice(0,pageSize).forEach((n,i)=>{const x=1039+(i%cols)*64,y=678+Math.floor(i/cols)*36;ctx.font='bold 20px Arial';ctx.fillStyle=green;ctx.fillText(n,x,y)});
+ // Números grandes, con separación y centrados en el área disponible.
+ const first=numbersText.slice(0,pageSize);
+ const activeCols=Math.min(cols,Math.max(1,first.length));
+ const colWidth=104;
+ const firstX=1032;
+ first.forEach((n,i)=>{
+  const x=firstX+(i%cols)*colWidth,y=681+Math.floor(i/cols)*48;
+  ctx.font='bold 32px Arial';ctx.fillStyle=navy;ctx.fillText(n,x,y);
+ });
  if(extraHeight){
   ctx.fillStyle='#f1f6f8';ctx.fillRect(0,H,W,extraHeight);
-  ctx.fillStyle=navy;ctx.font='bold 32px Arial';ctx.fillText('NÚMEROS ASIGNADOS (CONTINUACIÓN)',75,H+63);
-  numbersText.slice(pageSize).forEach((n,i)=>{const x=82+(i%cols)*193,y=H+110+Math.floor(i/cols)*49;ctx.fillStyle=green;ctx.font='bold 27px Arial';ctx.fillText(n,x,y)});
+  ctx.fillStyle=navy;ctx.font='bold 31px Arial';ctx.fillText('MÁS NÚMEROS DE ESTA COMPRA',70,H+66);
+  numbersText.slice(pageSize).forEach((n,i)=>{
+   const x=80+(i%8)*192,y=H+121+Math.floor(i/8)*54;
+   ctx.fillStyle=green;ctx.font='bold 30px Arial';ctx.fillText(n,x,y);
+  });
  }
  return canvas;
 }
