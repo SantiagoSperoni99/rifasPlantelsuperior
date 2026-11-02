@@ -1,48 +1,48 @@
-import React,{useEffect,useState} from 'react';import{createRoot}from'react-dom/client';import{createClient}from'@supabase/supabase-js';import './style.css';import raffleTemplateUrl from './C5D5D7B1-0D15-40FE-A37A-C954C3ED4238.png?url';
+import React,{useEffect,useState} from 'react';import{createRoot}from'react-dom/client';import{createClient}from'@supabase/supabase-js';import './style.css';
 const db=createClient('https://gxesptbscnzrozuwtgry.supabase.co','sb_publishable_YdSPSGG2eV9n_LjdynB_Zg_XRiO8zJS');const money=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n||0);
 const buyerMessage="🏉🇿🇦 ¡Nos vamos de gira a Sudáfrica 2027!\n\n¡Hola! ¿Cómo estás? 🙌🏼\n\nCon el Plantel Superior de Rugby del Club San Martín estamos organizando una rifa para juntar fondos y poder cumplir el sueño de viajar a Sudáfrica.\n\n🎟️ Cada número sale $25.000 y tenemos unos premios tremendos:\n\n🎁 Premios:\n📱 iPhone 18 Pro\n🛋️ Sillón Kora\n🚗 Service completo para el auto\n🐑 Un cordero\n🏉 Caja de cintas deportivas\n🏋️ 3 pases individuales para Beast Club Gym\n💪 2 sesiones individuales de recuperación deportiva en Entero\n\n📅 Sorteamos el 28 de noviembre.\n\nCualquier ayuda nos acerca un poquito más a esta experiencia que estamos preparando con tantas ganas.\n\n❤️ ¡Gracias por darnos una mano!\n\n¿Te copás con algún numerito? 🇿🇦🏉";
 const ticketNumbers=(sale,tickets)=>tickets.filter(t=>t.sale_id===sale.id).map(t=>String(t.number).padStart(4,'0'));
 const saleDate=value=>value?new Date(value).toLocaleString('es-AR'):'—';
 async function ticketCanvas(sale,numbers,sellerName){
- const canvas=document.createElement('canvas');canvas.width=1536;canvas.height=1024;const ctx=canvas.getContext('2d');
- const image=new Image();image.src=raffleTemplateUrl;await image.decode();
- ctx.drawImage(image,0,0,1536,1024);
- ctx.fillStyle='#f4f8f9';ctx.fillRect(0,290,800,734);
- const panelFill=(x,y,w,h,r,color)=>{ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=color;ctx.fill()};
- panelFill(26,309,752,683,19,'#ffffff');
- panelFill(26,309,752,63,15,'#123762');
- ctx.fillStyle='#ffffff';ctx.font='bold 31px Arial';ctx.fillText('PREMIOS DE LA RIFA',54,351);
- panelFill(47,390,710,125,14,'#eaf2f5');
- ctx.fillStyle='#0b3b70';ctx.font='bold 22px Arial';ctx.fillText('1.er PREMIO',69,427);
- ctx.font='bold 43px Arial';ctx.fillText('iPhone 18 Pro',69,477);
- ctx.fillStyle='#0b674a';ctx.fillRect(47,532,710,4);
- ctx.fillStyle='#123762';ctx.font='bold 24px Arial';
- const premios=['2. Sillón Kora','3. Service de auto','4. Cordero','5. Caja de cintas deportivas','6. Pase Beast Club Gym','7. Pase Beast Club Gym','8. Pase Beast Club Gym','9. Pase Entero','10. Pase Entero'];
- premios.forEach((p,i)=>{const yy=581+i*37;ctx.fillText(p,69,yy);});
- ctx.fillStyle='#0b674a';ctx.fillRect(47,932,710,3);
- ctx.fillStyle='#123762';ctx.font='bold 24px Arial';ctx.fillText('SORTEO 28/11  |  VALOR $25.000',69,970);
- const box=(x,y,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(x,y,w,h)};
- const round=(x,y,w,h,r,color)=>{ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=color;ctx.fill()};
- const text=(v,x,y,size=24,color='#092f5b',weight='bold')=>{ctx.fillStyle=color;ctx.font=weight+' '+size+'px Arial';ctx.fillText(String(v??'—'),x,y)};
- const fit=(v,x,y,maxWidth,size=26)=>{let value=String(v||'—');ctx.font='bold '+size+'px Arial';while(ctx.measureText(value).width>maxWidth&&value.length>2)value=value.slice(0,-2)+'…';text(value,x,y,size)};
- // Limpiar toda la región de datos original ANTES de dibujar tarjetas.
- // No dejar franjas de la plantilla visibles entre tarjetas.
- const x=807,w=711,innerX=831,innerW=665;
- box(807,290,711,526,'#f4f8f9');
- const panel=(y,h,title)=>{round(x,y,w,h,14,'#f9fbfd');round(innerX,y+8,innerW,40,7,'#073568');text(title,innerX+22,y+36,23,'#ffffff')};
- const field=(key,value,y,divider=true)=>{text(key,innerX+20,y,20,'#526980','normal');fit(value,innerX+196,y,innerW-226,24);if(divider)box(innerX+20,y+10,innerW-40,1,'#e0e8ed')};
- panel(301,209,'DATOS DEL COMPRADOR');
- field('Nombre:',sale.buyer_name,376);
- field('Teléfono:',sale.buyer_phone||'—',428);
- field('Email:',sale.buyer_email||'No informado',480,false);
- panel(519,108,'DATOS DEL VENDEDOR');
- field('Vendedor:',sellerName,599,false);
- panel(636,176,'NÚMEROS DE RIFA ASIGNADOS');
- const shown=numbers.slice(0,10);
- const gap=12,cellW=112,cellH=45,startX=innerX+20,startY=702;
- shown.forEach((n,i)=>{const xx=startX+(i%5)*(cellW+gap),yy=startY+Math.floor(i/5)*51;round(xx,yy,cellW,cellH,6,'#ffffff');ctx.strokeStyle='#087a45';ctx.lineWidth=2;ctx.strokeRect(xx,yy,cellW,cellH);ctx.font='bold 26px Arial';const value=String(n);text(value,xx+(cellW-ctx.measureText(value).width)/2,yy+32,26)});
- if(numbers.length>10)text('+'+(numbers.length-10)+' números más',innerX+20,804,17);
- // Fecha y precio permanecen en el diseño original.
+ const canvas=document.createElement('canvas');canvas.width=1600;canvas.height=1000;
+ const c=canvas.getContext('2d');const navy='#102e55',blue='#16477b',green='#08764d',white='#ffffff',muted='#63758a',gold='#dfb65c';
+ const rect=(x,y,w,h,color)=>{c.fillStyle=color;c.fillRect(x,y,w,h)};
+ const rounded=(x,y,w,h,r,color)=>{c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=color;c.fill()};
+ const label=(str,x,y,size=26,color=navy,bold=true)=>{c.fillStyle=color;c.font=(bold?'700 ':'400 ')+size+'px Arial';c.fillText(String(str??'—'),x,y)};
+ const fitted=(str,x,y,max,size=26,color=navy)=>{let v=String(str||'—');c.font='700 '+size+'px Arial';while(c.measureText(v).width>max&&v.length>2)v=v.slice(0,-2)+'…';label(v,x,y,size,color)};
+ rect(0,0,1600,1000,'#edf3f6');
+ rect(0,0,1600,190,navy);rect(0,190,1600,11,green);
+ rect(0,0,24,1000,green);
+ rounded(55,35,118,118,24,white);
+ const logo=new Image();logo.src='/favicon-rifa.png';
+ try{await logo.decode();c.drawImage(logo,65,45,98,98)}catch{}
+ label('CLUB SAN MARTÍN',207,91,49,white);
+ label('PLANTEL SUPERIOR  ·  GIRA SUDÁFRICA 2027',210,144,25,'#cde5dd');
+ rounded(1192,50,345,95,17,green);
+ label('RIFA SOLIDARIA',1220,89,28,white);
+ label('$25.000  ·  28/11',1220,124,24,white);
+ rounded(55,239,855,700,20,white);
+ rect(55,239,855,13,green);
+ label('PREMIOS',89,315,40,navy);
+ rounded(87,342,788,130,15,'#e6f1ec');
+ label('01',111,394,34,green);
+ label('iPhone 18 Pro',184,410,51,navy);
+ label('PREMIO PRINCIPAL',185,449,20,green);
+ const prizes=['Sillón Kora','Service de auto','Cordero','Caja de cintas deportivas','Pase Beast Club Gym','Pase Beast Club Gym','Pase Beast Club Gym','Pase Entero','Pase Entero'];
+ prizes.forEach((p,i)=>{const yy=522+i*42;rounded(91,yy-28,45,33,7,i%2?'#e8f0f6':'#e7f3ed');label(String(i+2).padStart(2,'0'),100,yy-5,20,green);label(p,158,yy,25,navy)});
+ rounded(945,239,600,700,20,white);rect(945,239,600,13,green);
+ label('TU BOLETO',982,310,39,navy);
+ label('DATOS DEL COMPRADOR',983,366,21,green);
+ label('Nombre',983,403,19,muted,false);fitted(sale.buyer_name,983,439,520,29);
+ label('Teléfono',983,481,19,muted,false);fitted(sale.buyer_phone,983,517,520,27);
+ label('Email',983,557,19,muted,false);fitted(sale.buyer_email||'No informado',983,588,520,23);
+ rect(983,609,524,2,'#dce6eb');
+ label('VENDEDOR',983,647,21,green);fitted(sellerName,983,681,520,27);
+ label('NÚMEROS ASIGNADOS',983,735,22,green);
+ const maxShown=24,shown=numbers.slice(0,maxShown);
+ shown.forEach((n,i)=>{const x=983+(i%4)*132,y=754+Math.floor(i/4)*29;rounded(x,y,117,26,5,'#e8f3ee');label(n,x+15,y+20,20,green)});
+ if(numbers.length>maxShown)label('+'+(numbers.length-maxShown)+' números adicionales',984,958,18,muted);
+ rect(0,968,1600,32,navy);
  return canvas;
 }
 async function downloadRaffle(sale,numbers,sellerName){
