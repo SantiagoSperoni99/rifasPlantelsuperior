@@ -7,6 +7,9 @@ async function ticketCanvas(sale,numbers,sellerName){
  const canvas=document.createElement('canvas');canvas.width=1536;canvas.height=1024;const ctx=canvas.getContext('2d');
  const image=new Image();image.src=raffleTemplateUrl;await image.decode();
  ctx.drawImage(image,0,0,1536,1024);
+ ctx.fillStyle='#092f5b';ctx.fillRect(0,280,800,744);
+ ctx.fillStyle='#ffffff';ctx.font='bold 27px Arial';
+ ['1. iPhone 18 Pro','2. Sillón Kora','3. Service de auto','4. Cordero','5. Caja de cintas deportivas','6. Pase Beast Club Gym','7. Pase Beast Club Gym','8. Pase Beast Club Gym','9. Pase Entero','10. Pase Entero'].forEach((p,i)=>ctx.fillText(p,55,365+i*53));
  const box=(x,y,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(x,y,w,h)};
  const round=(x,y,w,h,r,color)=>{ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=color;ctx.fill()};
  const text=(v,x,y,size=24,color='#092f5b',weight='bold')=>{ctx.fillStyle=color;ctx.font=weight+' '+size+'px Arial';ctx.fillText(String(v??'—'),x,y)};
