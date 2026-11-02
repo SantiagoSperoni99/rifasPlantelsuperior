@@ -30,3 +30,11 @@
 .transfer-alias-inline .payment-alias-value{display:inline-flex;align-items:center;min-height:46px;margin:0 0 12px;padding:8px 14px;border:1px solid #d9e7e5;border-radius:9px;background:#fff;font-size:clamp(20px,3vw,25px);font-weight:750;letter-spacing:.1px;color:#103e62;box-shadow:0 1px 3px rgba(0,0,0,.025)}
 .transfer-alias-inline button{display:flex;align-items:center;justify-content:center;width:auto;min-height:40px;padding:9px 15px;border-radius:9px;font-size:13px;font-weight:650}
 @media(max-width:600px){.transfer-alias-inline{padding:16px}.transfer-alias-inline .payment-alias-value{display:flex;width:100%;font-size:21px}.transfer-alias-inline button{width:100%}}
+
+/* Mis ventas: números compactos sin invadir las columnas vecinas */
+.sales-table td.sale-numbers-cell{min-width:155px;max-width:220px;white-space:normal;overflow-wrap:anywhere;vertical-align:top}
+.sale-numbers-preview{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:195px}
+.sale-numbers-more{margin-top:5px;position:relative}
+.sale-numbers-more summary{cursor:pointer;font-size:12px;color:#087a45;font-weight:700;white-space:nowrap}
+.sale-numbers-expanded{margin-top:8px;max-width:190px;white-space:normal;line-height:1.7;font-size:12px;color:#193453;overflow-wrap:anywhere}
+.tablewrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
