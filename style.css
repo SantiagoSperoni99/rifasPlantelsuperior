@@ -42,3 +42,19 @@
 /* Confirmación de pagos: evitar desbordes en ventas con muchos números */
 .payment-numbers{margin:9px 0 13px;padding:10px 12px;border-radius:9px;background:#f0f6f5;color:#17334d;font-size:13px;line-height:1.6;overflow-wrap:anywhere;max-width:100%}
 .payment-numbers .sale-numbers-expanded{max-width:none;white-space:normal;word-break:break-word}
+
+/* Edición de ventas propias */
+.sale-actions{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.sale-edit-overlay{position:fixed;inset:0;z-index:1000;background:rgba(9,30,53,.65);display:flex;align-items:center;justify-content:center;padding:16px}
+.sale-edit-dialog{background:white;color:#17334d;border-radius:16px;width:min(100%,520px);max-height:90dvh;overflow-y:auto;padding:24px;box-shadow:0 16px 60px #0003}
+.sale-edit-dialog h2{margin:0 0 8px}
+.sale-edit-dialog p{font-size:14px}
+.edit-locked-numbers{background:#eef5f7;border-radius:10px;padding:12px;margin:14px 0;overflow-wrap:anywhere;font-size:13px;line-height:1.6}
+.edit-locked-numbers div{font-weight:700;margin:5px 0;max-height:85px;overflow-y:auto}
+.edit-locked-numbers small{display:block;color:#526678}
+.sale-edit-form{display:grid;gap:12px}
+.sale-edit-form label{display:grid;gap:5px;font-size:13px;font-weight:700}
+.sale-edit-form input,.sale-edit-form select{box-sizing:border-box;width:100%;min-width:0;padding:11px;border:1px solid #bacbd2;border-radius:8px;font:inherit}
+.sale-edit-buttons{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-top:6px}
+.sale-edit-error{color:#b42318;font-weight:700}
+@media(max-width:600px){.sale-edit-dialog{padding:17px}.sale-edit-buttons button{flex:1}}
