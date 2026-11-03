@@ -58,3 +58,7 @@
 .sale-edit-buttons{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-top:6px}
 .sale-edit-error{color:#b42318;font-weight:700}
 @media(max-width:600px){.sale-edit-dialog{padding:17px}.sale-edit-buttons button{flex:1}}
+
+/* Búsqueda de ventas en administración */
+.payment-search-label{display:grid;gap:8px;font-weight:700;max-width:580px}
+.payment-search-label input{box-sizing:border-box;width:100%;padding:13px 15px;border:1px solid #b8cbd1;border-radius:10px;font:inherit}
