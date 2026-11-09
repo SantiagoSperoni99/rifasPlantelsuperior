@@ -5,52 +5,42 @@ const buyerMessage="🏉🇿🇦 ¡Nos vamos de gira a Sudáfrica 2027!\n\n¡Hol
 const ticketNumbers=(sale,tickets)=>tickets.filter(t=>t.sale_id===sale.id).map(t=>String(t.number).padStart(4,'0'));
 const saleDate=value=>value?new Date(value).toLocaleString('es-AR'):'—';
 async function ticketCanvas(sale,numbers,sellerName){
- const base=new Image();base.src=ticketTemplateUrl;await base.decode();
- const W=1648,H=928,cols=5,rows=3,pageSize=cols*rows;
- const numbersText=numbers.map(n=>String(n).padStart(4,'0'));
- const extra=Math.max(0,numbersText.length-pageSize),extraRows=Math.ceil(extra/8);
- const extraHeight=extraRows?120+extraRows*54:0;
- const prizesHeight=460;
- const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H+extraHeight+prizesHeight;
- const ctx=canvas.getContext('2d');ctx.drawImage(base,0,0,W,H);
- const navy='#092f5b',green='#087a45';
- const write=(v,x,y,size=24,max=430)=>{let t=String(v||'—');ctx.font='bold '+size+'px Arial';while(ctx.measureText(t).width>max&&t.length>2)t=t.slice(0,-2)+'…';ctx.fillStyle=navy;ctx.fillText(t,x,y)};
- write(sale.buyer_name,1160,363,25,390);
- write(sale.buyer_phone||'—',1160,403,25,390);
- write(sale.buyer_email||'No informado',1160,443,21,390);
- write(sellerName,1047,554,28,480);
- // Números grandes, con separación y centrados en el área disponible.
- const first=numbersText.slice(0,pageSize);
- const activeCols=Math.min(cols,Math.max(1,first.length));
- const colWidth=104;
- const firstX=1032;
- first.forEach((n,i)=>{
-  const x=firstX+(i%cols)*colWidth,y=681+Math.floor(i/cols)*48;
-  ctx.font='bold 32px Arial';ctx.fillStyle=navy;ctx.fillText(n,x,y);
- });
- if(extraHeight){
-  ctx.fillStyle='#f1f6f8';ctx.fillRect(0,H,W,extraHeight);
-  ctx.fillStyle=navy;ctx.font='bold 31px Arial';ctx.fillText('MÁS NÚMEROS DE ESTA COMPRA',70,H+66);
-  numbersText.slice(pageSize).forEach((n,i)=>{
-   const x=80+(i%8)*192,y=H+121+Math.floor(i/8)*54;
-   ctx.fillStyle=green;ctx.font='bold 30px Arial';ctx.fillText(n,x,y);
-  });
- }
- // Panel de premios actualizado, debajo del boleto original sin tapar datos.
- const py=H+extraHeight;
- ctx.fillStyle='#062e48';ctx.fillRect(0,py,W,prizesHeight);
- ctx.fillStyle='#f9c846';ctx.fillRect(0,py,W,9);
- ctx.fillStyle='#ffffff';ctx.font='bold 40px Arial';ctx.fillText('PREMIOS ACTUALIZADOS · GIRA SUDÁFRICA 2027',65,py+69);
- ctx.fillStyle='#f9c846';ctx.font='bold 30px Arial';ctx.fillText('1° iPhone 18 Pro',65,py+132);
- ctx.fillStyle='#ffffff';ctx.font='bold 30px Arial';ctx.fillText('2° Pinamar: 2 noches para 2 personas',65,py+182);
- ctx.fillText('3° Pinamar: 2 noches para 2 personas',65,py+230);
- ctx.font='bold 26px Arial';ctx.fillText('4° Sillón Kora',65,py+285);
- ctx.fillText('5° Service de auto',450,py+285);
- ctx.fillText('6° Cordero',920,py+285);
- ctx.fillText('7° Caja de cintas deportivas',65,py+337);
- ctx.fillText('8°, 9° y 10°: pases Beast Club Gym',65,py+383);
- ctx.fillText('11° y 12°: sesiones Entero',830,py+383);
- ctx.fillStyle='#f9c846';ctx.font='bold 23px Arial';ctx.fillText('SORTEO: 28 DE NOVIEMBRE · LA POSADA DE MORGAN, PINAMAR',65,py+432);
+ const W=1648,H=980,canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;
+ const ctx=canvas.getContext('2d'),navy='#062b49',green='#087a45',gold='#f5bd39';
+ const rect=(x,y,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(x,y,w,h)};
+ const text=(v,x,y,size=26,color=navy,bold=true,max=1500)=>{
+  let t=String(v??'—');ctx.font=(bold?'bold ':'')+size+'px Arial';
+  while(ctx.measureText(t).width>max&&t.length>2)t=t.slice(0,-2)+'…';
+  ctx.fillStyle=color;ctx.fillText(t,x,y);
+ };
+ rect(0,0,W,H,'#ffffff');rect(0,0,W,178,navy);rect(0,0,18,H,green);
+ rect(18,168,W-18,10,gold);
+ text('RIFA · GIRA SUDÁFRICA 2027',66,80,58,'#ffffff',true);
+ text('PLANTEL SUPERIOR · SAN MARTÍN RUGBY',68,135,29,gold);
+ rect(1155,38,430,95,green);text('SORTEO 28/11',1200,98,42,'#ffffff');
+ text('1° PREMIO',65,250,32,green);text('iPhone 18 Pro',65,320,70,navy);
+ text('2° PREMIO',710,246,30,green);text('PINAMAR · 2 NOCHES PARA 2 PERSONAS',710,290,29,navy);
+ text('3° PREMIO',710,355,30,green);text('PINAMAR · 2 NOCHES PARA 2 PERSONAS',710,399,29,navy);
+ rect(65,436,1515,3,'#d5e3e7');
+ text('TODOS LOS PREMIOS',65,492,32,green);
+ const prizes=[
+  '1. iPhone 18 Pro',
+  '2. Alojamiento Pinamar · 2 noches para 2 personas',
+  '3. Alojamiento Pinamar · 2 noches para 2 personas',
+  '4. Sillón Kora',
+  '5. Service de auto',
+  '6. Cordero',
+  '7. Caja de cintas deportivas',
+  '8, 9 y 10. Pases individuales Beast Club Gym',
+  '11 y 12. Sesiones individuales Entero'
+ ];
+ prizes.forEach((p,i)=>text(p,75,542+i*37,25,navy,i<3,1480));
+ rect(0,868,W,112,'#edf5f7');
+ text('COMPRADOR: '+(sale.buyer_name||'—'),65,906,25,navy,true,790);
+ text('TEL: '+(sale.buyer_phone||'—'),905,906,25,navy,true,640);
+ text('VENDEDOR: '+(sellerName||'—'),65,949,25,navy,true,670);
+ const nums=numbers.map(n=>String(n).padStart(4,'0')).join(' · ');
+ text('N°: '+nums,760,949,28,green,true,820);
  return canvas;
 }
 async function downloadRaffle(sale,numbers,sellerName){
