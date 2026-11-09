@@ -31,10 +31,13 @@ async function ticketCanvas(sale,numbers,sellerName){
   '5. Service de auto',
   '6. Cordero',
   '7. Caja de cintas deportivas',
-  '8, 9 y 10. Pases individuales Beast Club Gym',
-  '11 y 12. Sesiones individuales Entero'
+  '8. Pase individual Beast Club Gym',
+  '9. Pase individual Beast Club Gym',
+  '10. Pase individual Beast Club Gym',
+  '11. Sesión individual de recuperación Entero',
+  '12. Sesión individual de recuperación Entero'
  ];
- prizes.forEach((p,i)=>text(p,75,542+i*37,25,navy,i<3,1480));
+ prizes.forEach((p,i)=>text(p,75,532+i*27,23,navy,i<3,1480));
  rect(0,868,W,112,'#edf5f7');
  text('COMPRADOR: '+(sale.buyer_name||'—'),65,906,25,navy,true,790);
  text('TEL: '+(sale.buyer_phone||'—'),905,906,25,navy,true,640);
