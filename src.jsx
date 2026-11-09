@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react';import{createRoot}from'react-dom/client';import{createClient}from'@supabase/supabase-js';import './style.css';import clubCrestUrl from './favicon-rifa.png?url';
 import ticketTemplateUrl from './4AA611AC-DE39-4FDE-804C-E185EB6A4AC8.png?url';
 const db=createClient('https://gxesptbscnzrozuwtgry.supabase.co','sb_publishable_YdSPSGG2eV9n_LjdynB_Zg_XRiO8zJS');const money=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n||0);
-const buyerMessage="🏉🇿🇦 ¡Nos vamos de gira a Sudáfrica 2027!\n\n¡Hola! ¿Cómo estás? 🙌🏼\n\nCon el Plantel Superior de Rugby del Club San Martín estamos organizando una rifa para juntar fondos y poder cumplir el sueño de viajar a Sudáfrica.\n\n🎟️ Cada número sale $25.000 y tenemos unos premios tremendos:\n\n🎁 Premios:\n📱 iPhone 18 Pro\n🛋️ Sillón Kora\n🚗 Service completo para el auto\n🐑 Un cordero\n🏉 Caja de cintas deportivas\n🏋️ 3 pases individuales para Beast Club Gym\n💪 2 sesiones individuales de recuperación deportiva en Entero\n\n📅 Sorteamos el 28 de noviembre.\n\nCualquier ayuda nos acerca un poquito más a esta experiencia que estamos preparando con tantas ganas.\n\n❤️ ¡Gracias por darnos una mano!\n\n¿Te copás con algún numerito? 🇿🇦🏉";
+const buyerMessage="🏉🇿🇦 ¡Nos vamos de gira a Sudáfrica 2027!\n\n¡Hola! ¿Cómo estás? 🙌🏼\n\nCon el Plantel Superior de Rugby del Club San Martín estamos organizando una rifa para juntar fondos y poder cumplir el sueño de viajar a Sudáfrica.\n\n🎟️ Cada número sale $25.000 y tenemos unos premios tremendos:\n\n🎁 Premios:\n📱 iPhone 18 Pro\n🏖️ 2° premio: 2 noches en Pinamar para 2 personas\n🏖️ 3° premio: 2 noches en Pinamar para 2 personas\n🛋️ Sillón Kora\n🚗 Service completo para el auto\n🐑 Un cordero\n🏉 Caja de cintas deportivas\n🏋️ 3 pases individuales para Beast Club Gym\n💪 2 sesiones individuales de recuperación deportiva en Entero\n\n📅 Sorteamos el 28 de noviembre.\n\nCualquier ayuda nos acerca un poquito más a esta experiencia que estamos preparando con tantas ganas.\n\n❤️ ¡Gracias por darnos una mano!\n\n¿Te copás con algún numerito? 🇿🇦🏉";
 const ticketNumbers=(sale,tickets)=>tickets.filter(t=>t.sale_id===sale.id).map(t=>String(t.number).padStart(4,'0'));
 const saleDate=value=>value?new Date(value).toLocaleString('es-AR'):'—';
 async function ticketCanvas(sale,numbers,sellerName){
@@ -10,7 +10,8 @@ async function ticketCanvas(sale,numbers,sellerName){
  const numbersText=numbers.map(n=>String(n).padStart(4,'0'));
  const extra=Math.max(0,numbersText.length-pageSize),extraRows=Math.ceil(extra/8);
  const extraHeight=extraRows?120+extraRows*54:0;
- const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H+extraHeight;
+ const prizesHeight=460;
+ const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H+extraHeight+prizesHeight;
  const ctx=canvas.getContext('2d');ctx.drawImage(base,0,0,W,H);
  const navy='#092f5b',green='#087a45';
  const write=(v,x,y,size=24,max=430)=>{let t=String(v||'—');ctx.font='bold '+size+'px Arial';while(ctx.measureText(t).width>max&&t.length>2)t=t.slice(0,-2)+'…';ctx.fillStyle=navy;ctx.fillText(t,x,y)};
@@ -35,6 +36,21 @@ async function ticketCanvas(sale,numbers,sellerName){
    ctx.fillStyle=green;ctx.font='bold 30px Arial';ctx.fillText(n,x,y);
   });
  }
+ // Panel de premios actualizado, debajo del boleto original sin tapar datos.
+ const py=H+extraHeight;
+ ctx.fillStyle='#062e48';ctx.fillRect(0,py,W,prizesHeight);
+ ctx.fillStyle='#f9c846';ctx.fillRect(0,py,W,9);
+ ctx.fillStyle='#ffffff';ctx.font='bold 40px Arial';ctx.fillText('PREMIOS ACTUALIZADOS · GIRA SUDÁFRICA 2027',65,py+69);
+ ctx.fillStyle='#f9c846';ctx.font='bold 30px Arial';ctx.fillText('1° iPhone 18 Pro',65,py+132);
+ ctx.fillStyle='#ffffff';ctx.font='bold 30px Arial';ctx.fillText('2° Pinamar: 2 noches para 2 personas',65,py+182);
+ ctx.fillText('3° Pinamar: 2 noches para 2 personas',65,py+230);
+ ctx.font='bold 26px Arial';ctx.fillText('4° Sillón Kora',65,py+285);
+ ctx.fillText('5° Service de auto',450,py+285);
+ ctx.fillText('6° Cordero',920,py+285);
+ ctx.fillText('7° Caja de cintas deportivas',65,py+337);
+ ctx.fillText('8°, 9° y 10°: pases Beast Club Gym',65,py+383);
+ ctx.fillText('11° y 12°: sesiones Entero',830,py+383);
+ ctx.fillStyle='#f9c846';ctx.font='bold 23px Arial';ctx.fillText('SORTEO: 28 DE NOVIEMBRE · LA POSADA DE MORGAN, PINAMAR',65,py+432);
  return canvas;
 }
 async function downloadRaffle(sale,numbers,sellerName){
