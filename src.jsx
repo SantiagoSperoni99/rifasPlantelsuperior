@@ -1,49 +1,44 @@
 import React,{useEffect,useState} from 'react';import{createRoot}from'react-dom/client';import{createClient}from'@supabase/supabase-js';import './style.css';import clubCrestUrl from './favicon-rifa.png?url';
-import ticketTemplateUrl from './4AA611AC-DE39-4FDE-804C-E185EB6A4AC8.png?url';
+import ticketTemplateUrl from './plantilla-boleto.png?url';
 const db=createClient('https://gxesptbscnzrozuwtgry.supabase.co','sb_publishable_YdSPSGG2eV9n_LjdynB_Zg_XRiO8zJS');const money=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n||0);
 const buyerMessage="🏉🇿🇦 ¡Nos vamos de gira a Sudáfrica 2027!\n\n¡Hola! ¿Cómo estás? 🙌🏼\n\nCon el Plantel Superior de Rugby del Club San Martín estamos organizando una rifa para juntar fondos y poder cumplir el sueño de viajar a Sudáfrica.\n\n🎟️ Cada número sale $25.000 y tenemos unos premios tremendos:\n\n🎁 Premios:\n📱 iPhone 18 Pro\n🏖️ 2° premio: 2 noches en Pinamar para 2 personas\n🏖️ 3° premio: 2 noches en Pinamar para 2 personas\n🛋️ Sillón Kora\n🚗 Service completo para el auto\n🐑 Un cordero\n🏉 Caja de cintas deportivas\n🏋️ 3 pases individuales para Beast Club Gym\n💪 2 sesiones individuales de recuperación deportiva en Entero\n\n📅 Sorteamos el 28 de noviembre.\n\nCualquier ayuda nos acerca un poquito más a esta experiencia que estamos preparando con tantas ganas.\n\n❤️ ¡Gracias por darnos una mano!\n\n¿Te copás con algún numerito? 🇿🇦🏉";
 const ticketNumbers=(sale,tickets)=>tickets.filter(t=>t.sale_id===sale.id).map(t=>String(t.number).padStart(4,'0'));
 const saleDate=value=>value?new Date(value).toLocaleString('es-AR'):'—';
 async function ticketCanvas(sale,numbers,sellerName){
- const W=1648,H=980,canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;
- const ctx=canvas.getContext('2d'),navy='#062b49',green='#087a45',gold='#f5bd39';
- const rect=(x,y,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(x,y,w,h)};
- const text=(v,x,y,size=26,color=navy,bold=true,max=1500)=>{
-  let t=String(v??'—');ctx.font=(bold?'bold ':'')+size+'px Arial';
-  while(ctx.measureText(t).width>max&&t.length>2)t=t.slice(0,-2)+'…';
-  ctx.fillStyle=color;ctx.fillText(t,x,y);
+ const image=new Image();
+ image.src=ticketTemplateUrl;
+ await image.decode();
+ const canvas=document.createElement('canvas');
+ canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+ const ctx=canvas.getContext('2d');
+ ctx.drawImage(image,0,0);
+ // Remove the three preprinted underline strokes without changing the artwork or labels.
+ ctx.fillStyle='#ffffff';
+ [[260,969,296,17],[640,969,240,17],[1110,969,351,17]].forEach(([x,y,w,h])=>ctx.fillRect(x,y,w,h));
+ const fitText=(value,x,y,maxWidth,maxSize=23)=>{
+  const content=String(value??'—').trim()||'—';
+  let size=maxSize;ctx.font='bold '+size+'px Arial';
+  while(size>12&&ctx.measureText(content).width>maxWidth){size--;ctx.font='bold '+size+'px Arial'}
+  ctx.fillStyle='#082746';ctx.textBaseline='middle';ctx.textAlign='left';
+  ctx.fillText(content,x,y,maxWidth);
  };
- rect(0,0,W,H,'#ffffff');rect(0,0,W,178,navy);rect(0,0,18,H,green);
- rect(18,168,W-18,10,gold);
- text('RIFA · GIRA SUDÁFRICA 2027',66,80,58,'#ffffff',true);
- text('PLANTEL SUPERIOR · SAN MARTÍN RUGBY',68,135,29,gold);
- rect(1155,38,430,95,green);text('SORTEO 28/11',1200,98,42,'#ffffff');
- text('1° PREMIO',65,250,32,green);text('iPhone 18 Pro',65,320,70,navy);
- text('2° PREMIO',710,246,30,green);text('PINAMAR · 2 NOCHES PARA 2 PERSONAS',710,290,29,navy);
- text('3° PREMIO',710,355,30,green);text('PINAMAR · 2 NOCHES PARA 2 PERSONAS',710,399,29,navy);
- rect(65,436,1515,3,'#d5e3e7');
- text('TODOS LOS PREMIOS',65,492,32,green);
- const prizes=[
-  '1. iPhone 18 Pro',
-  '2. Alojamiento Pinamar · 2 noches para 2 personas',
-  '3. Alojamiento Pinamar · 2 noches para 2 personas',
-  '4. Sillón Kora',
-  '5. Service de auto',
-  '6. Cordero',
-  '7. Caja de cintas deportivas',
-  '8. Pase individual Beast Club Gym',
-  '9. Pase individual Beast Club Gym',
-  '10. Pase individual Beast Club Gym',
-  '11. Sesión individual de recuperación Entero',
-  '12. Sesión individual de recuperación Entero'
- ];
- prizes.forEach((p,i)=>text(p,75,532+i*27,23,navy,i<3,1480));
- rect(0,868,W,112,'#edf5f7');
- text('COMPRADOR: '+(sale.buyer_name||'—'),65,906,25,navy,true,790);
- text('TEL: '+(sale.buyer_phone||'—'),905,906,25,navy,true,640);
- text('VENDEDOR: '+(sellerName||'—'),65,949,25,navy,true,670);
- const nums=numbers.map(n=>String(n).padStart(4,'0')).join(' · ');
- text('N°: '+nums,760,949,28,green,true,820);
+ fitText(sale.buyer_name,260,969,294,23);
+ fitText(sale.buyer_phone,640,969,238,23);
+ fitText(sellerName,1110,969,345,23);
+ const items=numbers.map(n=>String(n).padStart(4,'0'));
+ const cols=Math.min(5,Math.max(1,items.length));
+ const rows=Math.ceil(items.length/cols);
+ const x0=100,x1=1436,y0=785,y1=882;
+ const cellWidth=(x1-x0)/cols,cellHeight=(y1-y0)/rows;
+ const fontSize=Math.max(8,Math.min(83,cellWidth*0.43,cellHeight*0.66));
+ ctx.fillStyle='#087a45';ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.font='bold '+fontSize+'px Arial';
+ items.forEach((num,i)=>{
+  const row=Math.floor(i/cols),col=i%cols;
+  const countInRow=Math.min(cols,items.length-row*cols);
+  const rowStart=x0+(x1-x0-countInRow*cellWidth)/2;
+  ctx.fillText(num,rowStart+(col+0.5)*cellWidth,y0+(row+0.5)*cellHeight,cellWidth-8);
+ });
  return canvas;
 }
 async function downloadRaffle(sale,numbers,sellerName){
