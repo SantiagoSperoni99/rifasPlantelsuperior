@@ -1,0 +1,6 @@
+import React from 'react';
+export default function Liquidacion({profile,stats,settings,money}){
+ const common=stats.reduce((a,s)=>a+Number(s.common_amount||0),0),cost=Number(settings.expense_target),missing=Math.max(0,cost-common),share=stats.length?missing/stats.length:0;
+ const mine=stats.find(s=>s.seller_id===profile?.id),gross=Number(mine?.individual_amount||0);
+ return <section className="panel"><h1>Mi recaudación</h1><p>Vista preliminar · distribución pendiente de habilitación administrativa.</p><h2>{money(Math.max(0,gross-share))}</h2><p>Recaudación individual: {money(gross)}</p><p>Descuento estimado: {money(share)}</p><h2>Fondo Común PS</h2><p>Recaudación: {money(common)} · {cost? (100*common/cost).toFixed(1)+'%':'Sin objetivo'}</p><p>Costos: {money(cost)}</p><p>Faltante: {money(missing)}</p><p>Excedente PS: {money(Math.max(0,common-cost))}</p><h2>Destinos de la liquidación</h2>{['Fondo de gira individual','Fondo común PS','Ropa','Regalar a otro jugador'].map(x=><p key={x}><label>{x}<input type="number" disabled placeholder="Pendiente de habilitación"/></label></p>)}</section>
+}
